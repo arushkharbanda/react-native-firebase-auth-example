@@ -7,22 +7,30 @@ type Props = {
     label: string,
     onChangeText: () => void,
     value: string,
-    autoCorrect: boolean
+    autoCorrect: boolean,
+    placeholder: string,
+    secureTextEntry: boolean
 }
 
-export const Input = ({ label, onChangeText, value, autoCorrect } : Props) => {
+export const Input = ({ label, onChangeText, value, autoCorrect, placeholder, secureTextEntry } : Props) => {
     const { viewStyle, inputStyle, labelStyle } = styles;
     return (
         <View style={viewStyle}>
              <Text style={labelStyle}>{label}</Text>
              <TextInput
                 value={value}
+                secureTextEntry={secureTextEntry}
                 onChangeText={onChangeText}
                 style={inputStyle}
                 autoCorrect={autoCorrect}
+                placeholder={placeholder} 
             />
         </View>
     );
+};
+
+Input.defaultProps = {
+    secureTextEntry: false
 };
 
 const styles = {

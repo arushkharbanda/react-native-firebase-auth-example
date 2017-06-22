@@ -1,6 +1,7 @@
 //@flow
 
 import React, { Component } from 'react';
+import firebase from 'firebase';
 import { Card, CardSection, Button, Input } from './';
 
 type State = {
@@ -13,23 +14,33 @@ export class LoginForm extends Component {
         email: '',
         password: ''
     }
+    onButtonPress = () => {
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password);
+    }
     render() {
-        const { email } = this.state;
         return (
             <Card>
                 <CardSection>
                     <Input 
-                        value={email}
+                        value={this.state.email}
                         label="E-mail"
-                        onChangeText={text => this.setState({ email: text })}
+                        placeholder="username@gmail.com"
+                        onChangeText={email => this.setState({ email })}
                     />
                 </CardSection>
                 <CardSection>
-
+                    <Input 
+                        value={this.state.password}
+                        label="Password"
+                        secureTextEntry
+                        placeholder="password"
+                        onChangeText={password => this.setState({ password })}
+                    />
                 </CardSection>
                 <CardSection>
                     <Button
-                        onPress={() => console.log(this.state.email)}
+                        onPress={this.onButtonPress}
                         autoCorrect={false}
                     >
                         Login
@@ -39,5 +50,3 @@ export class LoginForm extends Component {
         );
     }
 }
-
-//https://github.com/joaoeffting/react-native-firebase-auth-example.git
