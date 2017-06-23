@@ -2,23 +2,41 @@
 
 import React, { Component } from 'react';
 import firebase from 'firebase';
-import { Card, CardSection, Button, Input } from './';
+import { Alert } from 'react-native';
+import { Card, CardSection, Button, Input, Spinner } from './';
 
 type State = {
     email: string,
-    password: string
+    password: string,
+    loding: boolean
 }
 
+const initState = {
+    email: '',
+    password: '',
+    loading: false
+};
+
 export class LoginForm extends Component {
-    state: State = {
-        email: '',
-        password: ''
-    }
-    onButtonPress = () => {
+    state: State = initState;
+    onButtonPress = async () : Promise<void> => {
         const { email, password } = this.state;
-        firebase.auth().signInWithEmailAndPassword(email, password);
+        this.setState({ loading: true });
+        try {
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            this.setState(initState);
+        } catch (e) {
+            try {
+                await firebase.auth().createUserWithEmailAndPassword(email, password);
+                this.setState(initState);                
+            } catch (err) {
+                this.setState({ loading: false });
+                Alert.alert('Authentication failed!');
+            }
+        }
     }
     render() {
+        const { loading } = this.state;
         return (
             <Card>
                 <CardSection>
@@ -39,12 +57,15 @@ export class LoginForm extends Component {
                     />
                 </CardSection>
                 <CardSection>
-                    <Button
-                        onPress={this.onButtonPress}
-                        autoCorrect={false}
-                    >
-                        Login
-                    </Button>
+                    {
+                        loading ?   <Spinner /> :
+                                    <Button
+                                        onPress={this.onButtonPress}
+                                        autoCorrect={false}
+                                    >
+                                        Login
+                                    </Button>
+                    }
                 </CardSection>
             </Card>
         );
